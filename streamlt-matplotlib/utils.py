@@ -4,8 +4,12 @@ import pandas as pd
 # DATA LOADING FUNCTIONS
 #--------------------------------------------------------
 @st.cache
-def load_data(filename='matplotlib-builder-gui/streamlt-matplotlib/sample_data.csv'):
-    data = pd.read_csv(filename)
+def load_data(filename='sample_data.csv'):
+    try:
+        data = pd.read_csv(filename)
+    except:
+        import os
+        print(os.listdir())
     return data
 
 @st.cache
