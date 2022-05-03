@@ -5,11 +5,7 @@ import pandas as pd
 #--------------------------------------------------------
 @st.cache
 def load_data(filename='sample_data.csv'):
-    try:
-        data = pd.read_csv(filename)
-    except:
-        import os
-        print(os.listdir())
+    data = pd.read_csv(filename)
     return data
 
 @st.cache
