@@ -5,7 +5,7 @@ import os
 # DATA LOADING FUNCTIONS
 #--------------------------------------------------------
 @st.cache
-def load_data(filename):
+def load_data(filename=None):
     if not filename:
         folder = 'items'
         filename = 'sample_data.csv'
