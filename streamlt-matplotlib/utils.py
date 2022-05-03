@@ -7,7 +7,7 @@ import os
 @st.cache
 def load_data(filename=None):
     if not filename:
-        folder = 'items'
+        folder = 'streamlt-matplotlib/items'
         filename = 'sample_data.csv'
         path = os.path.join(folder, filename)
         data = pd.read_csv(path)
