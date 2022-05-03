@@ -61,9 +61,11 @@ for sub_ax in [(i, j) for i in range(figure_options['rows']) for j in range(figu
 
 st.markdown("### Figure Preview")
 st.pyplot(figure.fig)
-figure.fig.savefig('graph.png')
 
-st.download_button('Download', open('graph.png', 'rb'), file_name='graph.png')
+#TROUBLE SHOOTING THE BELOW CODE
+#figure.fig.savefig('graph.png')
+#st.download_button('Download', open('graph.png', 'rb'), file_name='graph.png')
+
 with st.expander("CODE"):
     st.markdown(make_fig_code(figure_options, chart_options))
 
