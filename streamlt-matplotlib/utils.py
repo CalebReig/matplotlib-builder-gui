@@ -1,11 +1,18 @@
 import streamlit as st
 import pandas as pd
+import os
 
 # DATA LOADING FUNCTIONS
 #--------------------------------------------------------
 @st.cache
-def load_data(filename='sample_data.csv'):
-    data = pd.read_csv(filename)
+def load_data(filename):
+    if not filename:
+        folder = 'items'
+        filename = 'sample_data.csv'
+        path = os.path.join(folder, filename)
+        data = pd.read_csv(path)
+    else:
+        data = pd.read_csv(filename)
     return data
 
 @st.cache
