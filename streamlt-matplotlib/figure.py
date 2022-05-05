@@ -24,7 +24,26 @@ class Figure():
             if ax_ix2 > ax_ix1:
                 ix = ax_ix2
             ax = self.axs[ix]
-        ax.hist(data[chart_options['col']], color=chart_options['color'])
+        ax.hist(data[chart_options['col']], bins=chart_options['bins'],
+                color=chart_options['color'])
+        ax.set_title(chart_options['title'], {'size': chart_options['title_size'], 
+                    'weight': get_weight(chart_options['title_weight'])})
+        ax.set_xlabel(chart_options['xlabel'], {'size': chart_options['xlabel_size'],
+                    'weight': get_weight(chart_options['xlabel_weight'])})
+        ax.set_ylabel(chart_options['ylabel'], {'size': chart_options['ylabel_size'],
+                    'weight': get_weight(chart_options['ylabel_weight'])})
+
+    def box_plot(self, ax_ix1, data, ax_ix2=None, chart_options={}):
+        ax = self.axs
+        if self.rows > 1 and  self.columns > 1:
+            ax = self.axs[ax_ix1, ax_ix2]
+        elif self.num_plots > 1:
+            ix = ax_ix1
+            if ax_ix2 > ax_ix1:
+                ix = ax_ix2
+            ax = self.axs[ix]
+        ax.boxplot(data[chart_options['col']], showfliers=chart_options['outliers'], 
+                        vert=chart_options['vert'])
         ax.set_title(chart_options['title'], {'size': chart_options['title_size'], 
                     'weight': get_weight(chart_options['title_weight'])})
         ax.set_xlabel(chart_options['xlabel'], {'size': chart_options['xlabel_size'],
