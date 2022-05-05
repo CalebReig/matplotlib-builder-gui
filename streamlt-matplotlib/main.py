@@ -1,5 +1,8 @@
 import streamlit as st
 from utils import *
+from code_generator import *
+from chart_expander import *
+from text_expander import *
 from figure import Figure
 
 
@@ -8,8 +11,6 @@ try:
 except:
     data = load_data()
 
-
-
 st.title('Matplotlib Graph Builder GUI')
 
 # SIDEBAR OPTIONS
@@ -17,6 +18,16 @@ st.title('Matplotlib Graph Builder GUI')
 #FIGURE
 st.sidebar.markdown("## Figure Options")
 figure_options = {}
+
+try:
+    if st.session_state['upload_data']: 
+        figure_options['data'] = st.session_state['upload_data'].name
+    else:
+        figure_options['data'] = 'sample_data.csv'
+except:
+    figure_options['data'] = 'sample_data.csv'
+
+
 with st.sidebar.expander("FIGURE OPTIONS", expanded=False):
     figure_options['height'] = int(st.number_input("Height", 3, 30, 5))
     figure_options['width'] = int(st.number_input("Width", 3, 30, 10))
@@ -35,21 +46,14 @@ chart_options = {}
 for sub_ax in [(i, j) for i in range(figure_options['rows']) for j in range(figure_options['columns'])]:
     chart_options[sub_ax] = {}
     with st.sidebar.expander("SUBPLOT: " + str(sub_ax), expanded=False):
-        chart_options[sub_ax]['col'] = st.selectbox('Column', get_data_columns(data), key=str(sub_ax)+'_col')
-        chart_options[sub_ax]['type'] = st.selectbox('Chart Type', ['Histogram'], key=str(sub_ax) + '_type')
-        chart_options[sub_ax]['color'] = st.color_picker('Color', '#808080', key=str(sub_ax)+'_color')
-        chart_options[sub_ax]['title'] = st.text_input("Title", key=str(sub_ax)+'_title')
-        chart_options[sub_ax]['title_weight'] = st.checkbox('Bold', False,key=str(sub_ax)+'_titleweight')
-        chart_options[sub_ax]['title_size'] = st.slider("Title: Text Size", 0, 72, 20, 1, 
-                                                        key=str(sub_ax)+'_titletext')
-        chart_options[sub_ax]['xlabel'] = st.text_input("X-Axis Label", key=str(sub_ax)+'_xlabel')
-        chart_options[sub_ax]['xlabel_weight'] = st.checkbox('Bold', False, key=str(sub_ax)+'_xlabelweight')
-        chart_options[sub_ax]['xlabel_size'] = st.slider("X Axis: Text Size", 0, 72, 20, 1, 
-                                                        key=str(sub_ax)+'_xlabeltext')
-        chart_options[sub_ax]['ylabel'] = st.text_input("Y-Axis Label", key=str(sub_ax)+'_ylabel')
-        chart_options[sub_ax]['ylabel_weight'] = st.checkbox('Bold', False, key=str(sub_ax)+'_ylabelweight')
-        chart_options[sub_ax]['ylabel_size'] = st.slider("Y-Axis: Text Size", 0, 72, 20, 1, 
-                                                        key=str(sub_ax)+'_ylabeltext')
+        st.write('#### Chart Options')
+        chart_options[sub_ax]['type'] = st.selectbox('Chart Type', ['Histogram', 'Box Plot'], key=str(sub_ax) + '_type')
+        placeholder = st.empty()
+        with placeholder.container():
+            expand_chart(chart_options[sub_ax], data, sub_ax)
+        st.write('#### Text Options')
+        expand_text(chart_options[sub_ax], sub_ax)
+
         plot(figure=figure, ax_ix1=sub_ax[0], ax_ix2=sub_ax[1], 
                         data=data, chart_options=chart_options[sub_ax])
 
