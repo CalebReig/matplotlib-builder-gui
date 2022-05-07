@@ -3,7 +3,9 @@ from utils import *
 from code_generator import *
 from chart_expander import *
 from text_expander import *
+from annotation_expander import *
 from figure import Figure
+import io
 
 
 try:
@@ -43,13 +45,13 @@ figure.set_background_color(figure_options['background_color'])
 #SUBPLOTS
 st.sidebar.markdown("## Subplot Options")
 chart_options = {}
-for sub_ax in [(i, j) for i in range(figure_options['rows']) for j in range(figure_options['columns'])]:
+for sub_ax in figure.list_subaxs():
     chart_options[sub_ax] = {}
     with st.sidebar.expander("SUBPLOT: " + str(sub_ax), expanded=False):
         st.write('#### Chart Options')
         chart_options[sub_ax]['type'] = st.selectbox('Chart Type', ['Histogram', 'Box Plot'], key=str(sub_ax) + '_type')
-        placeholder = st.empty()
-        with placeholder.container():
+        chart_placeholder = st.empty()
+        with chart_placeholder.container():
             expand_chart(chart_options[sub_ax], data, sub_ax)
         st.write('#### Text Options')
         expand_text(chart_options[sub_ax], sub_ax)
@@ -58,7 +60,20 @@ for sub_ax in [(i, j) for i in range(figure_options['rows']) for j in range(figu
                         data=data, chart_options=chart_options[sub_ax])
 
 
+# ANNOTATIONS
+annotation_options = {}
+st.sidebar.markdown("## Annotation Options")
+num_annots = st.sidebar.number_input("Number of Annotations", 0, 10, 0)
 
+for annot in range(int(num_annots)):
+    annotation_options[annot] = {}
+    with st.sidebar.expander("ANNOTATION " + str(annot), expanded=False):
+        annotation_options[annot]['type'] = st.selectbox('Type', ['Text', 'Arrow'], 
+                                                        key=str(annot) + '_type')
+        annot_placeholder = st.empty()
+        with annot_placeholder.container():
+            expand_annotation(annotation_options[annot], annot)
+        annotate(figure=figure, options=annotation_options[annot])
 
 #--------------------------------------------------------
 
@@ -67,11 +82,13 @@ st.markdown("### Figure Preview")
 st.pyplot(figure.fig)
 
 #TROUBLE SHOOTING THE BELOW CODE
-#figure.fig.savefig('graph.png')
-#st.download_button('Download', open('graph.png', 'rb'), file_name='graph.png')
+buf = io.BytesIO()
+figure.fig.savefig(buf, format='png')
+buf.seek(0)
+st.download_button('Download', buf, file_name='graph.png')
 
 with st.expander("CODE"):
-    st.markdown(make_fig_code(figure_options, chart_options))
+    st.markdown(make_fig_code(figure_options, chart_options, annotation_options))
 
 st.session_state['upload_data'] = st.file_uploader("Upload Your CSV File")
 st.markdown("### Data Sample")
